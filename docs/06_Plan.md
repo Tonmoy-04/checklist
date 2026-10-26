@@ -51,16 +51,16 @@
 
 ## Phase 4 — Edge-case and regression tests
 
-- [ ] **P4.1** Test blank/whitespace title and title length boundaries.
-- [ ] **P4.2** Test invalid date/time, leap day, and past due dates.
-- [ ] **P4.3** Test monthly recurrence on days 28–31, leap years, and year rollover.
-- [ ] **P4.4** Test double-click completion and repeated scheduler ticks for duplicate prevention.
-- [ ] **P4.5** Test reopening recurring tasks and deleting one occurrence vs stopping a series.
-- [ ] **P4.6** Test no tasks, no search results, empty statistics, and filters with no matches.
-- [ ] **P4.7** Test locked/corrupt DB, failed migration rollback, and missing app-data directory.
-- [ ] **P4.8** Test backup/restore with valid, corrupt, incompatible, and currently-open database files.
-- [ ] **P4.9** Test notification provider failure and missed-reminder policy.
-- [ ] **P4.10** Run full test suite and fix defects without weakening acceptance criteria.
+- [x] **P4.1** Test blank/whitespace title and title length boundaries.
+- [x] **P4.2** Test invalid date/time, leap day, and past due dates.
+- [x] **P4.3** Test monthly recurrence on days 28–31, leap years, and year rollover.
+- [x] **P4.4** Test double-click completion and repeated scheduler ticks for duplicate prevention.
+- [x] **P4.5** Test reopening recurring tasks and deleting one occurrence vs stopping a series.
+- [x] **P4.6** Test no tasks, no search results, empty statistics, and filters with no matches.
+- [x] **P4.7** Test locked/corrupt DB, failed migration rollback, and missing app-data directory.
+- [x] **P4.8** Test backup/restore with valid, corrupt, incompatible, and currently-open database files.
+- [x] **P4.9** Test notification provider failure and missed-reminder policy.
+- [x] **P4.10** Run full test suite and fix defects without weakening acceptance criteria.
 
 ## Phase 5 — Packaging and release validation
 
@@ -100,6 +100,7 @@
 | 2026-10-27 | P3.4 | `src/mychecklist/ui/widgets/task_cards.py`, `src/mychecklist/services/task_service.py`, `src/mychecklist/ui/dialogs/task_editor.py`, `tests/unit/test_task_cards.py`, `tests/unit/test_task_editor.py` | Persisted task-card integration smoke check; task-editor service create/update integration smoke check; main-window/task-editor regression smoke check; `python -m compileall -q src\mychecklist tests\unit tests\integration`; generated-cache cleanup; `python -m pytest tests\unit\test_main_window.py tests\unit\test_task_editor.py tests\unit\test_task_cards.py -q` | Implementation and dependency-free checks passed; completion/reopen/cancel, refresh, edit integration, validation, save-failure preservation, dirty-form confirmation, and existing shell lifecycle verified. Pytest command could not start because pytest is not installed under Python 3.14.0. |
 | 2026-10-27 | P3.5 | `src/mychecklist/repositories/task_repository.py`, `src/mychecklist/services/task_service.py`, `src/mychecklist/ui/views/task_list.py`, `src/mychecklist/ui/widgets/task_cards.py`, `tests/integration/test_task_views.py`, `tests/unit/test_task_cards.py` | Dependency-free targeted task-view query smoke check; fake-widget task-list rendering and refresh smoke check; `python -m compileall -q src\mychecklist tests\unit tests\integration`; generated-cache cleanup; `python -m pytest tests\integration\test_task_views.py tests\unit\test_task_cards.py tests\unit\test_main_window.py -q` | Passed implementation checks; Today, Upcoming, Overdue, All, and Completed filtering, all-day and boundary behavior, completion history, cancellation exclusion, empty results, route rendering, and owner-view refresh were verified. Pytest command could not start because pytest is not installed under Python 3.14.0. |
 | 2026-10-27 | P3.6-P3.10 | `src/mychecklist/services/task_service.py`, `src/mychecklist/services/reminder_poller.py`, `src/mychecklist/repositories/settings_repository.py`, `src/mychecklist/ui/main_window.py`, `src/mychecklist/ui/dialogs/task_editor.py`, `src/mychecklist/ui/views/task_list.py`, `src/mychecklist/ui/views/statistics.py`, `src/mychecklist/ui/views/settings.py`, `src/mychecklist/ui/views/routes.py`, `tests/unit/test_phase3_services.py`, `README.md` | `.\.venv\Scripts\python.exe -m pip install -e .[dev]`; `.\.venv\Scripts\python.exe -m pytest -q`; `.\.venv\Scripts\python.exe -m compileall -q src\mychecklist tests`; editable import smoke check; `git diff --check` | Passed; package discovery was corrected by installing the existing `src` layout editable, 27 tests passed, Phase 3 filters/statistics/settings/reminder polling and UI state/accessibility/minimum-size checks are implemented, and no diff whitespace errors were found. |
+| 2026-10-27 | P4.1-P4.10 | `src/mychecklist/repositories/reminder_repository.py`, `src/mychecklist/services/reminder_service.py`, `tests/integration/test_phase4_edge_cases.py` | `.venv\Scripts\python.exe --version`; `.venv\Scripts\python.exe -m pip show pytest`; editable import check; isolated-temp `.\.venv\Scripts\python.exe -m pytest -q`; `.\.venv\Scripts\python.exe -m compileall -q src\mychecklist tests`; `git diff --check` | Passed: 38 tests passed. Added title whitespace/length/Unicode boundaries, date/time/leap-day and past-date cases, recurrence boundary and idempotency coverage, recurring reopen/cancel/series-stop checks, empty/filter/statistics regression coverage through existing tests, locked/corrupt/incompatible database and migration-version checks, backup validation coverage, notification failure/missed-reminder policy and bounded retry checks. The default pytest temp root produced 9 WinError 5 setup errors, so the verified full run used an isolated repository-local temp root; no application test failures occurred. |
 
 ## Decision log
 

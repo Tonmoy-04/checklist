@@ -12,7 +12,9 @@ class ReminderRepository:
     def __init__(self, connection: sqlite3.Connection) -> None:
         self.connection = connection
 
-    def claim_due(self, now: str, offset: int) -> list[sqlite3.Row]:
+    def claim_due(
+        self, now: str, offset: int, *, notify_missed: bool = True, max_attempts: int = 3
+    ) -> list[sqlite3.Row]:
         with self.connection:
             rows = list(self.connection.execute(
                 """SELECT o.id, s.title, o.due_date, o.due_time
@@ -20,12 +22,14 @@ class ReminderRepository:
                    WHERE o.status='open'
                      AND datetime(o.due_date || ' ' || COALESCE(o.due_time, '23:59'),
                                   '-' || ? || ' minutes') <= datetime(?)
+                   AND (? OR datetime(o.due_date || ' ' || COALESCE(o.due_time, '23:59')) >= datetime(?))
                    AND NOT EXISTS (
-                       SELECT 1 FROM reminder_deliveries d
-                       WHERE d.occurrence_id=o.id AND d.reminder_offset_minutes=?
-                         AND d.status IN ('pending', 'delivered')
+                     SELECT 1 FROM reminder_deliveries d
+                     WHERE d.occurrence_id=o.id AND d.reminder_offset_minutes=?
+                       AND (d.status IN ('pending', 'delivered')
+                            OR (d.status='failed' AND d.attempt_count >= ?))
                    )""",
-                (offset, now, offset),
+                (offset, now, int(notify_missed), now, offset, max_attempts),
             ))
             for row in rows:
                 self.connection.execute(
