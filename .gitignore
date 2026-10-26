@@ -6,6 +6,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.pytest-temp/
+*.egg-info/
 .mypy_cache/
 .ruff_cache/
 
@@ -13,6 +15,7 @@ __pycache__/
 build/
 dist/
 *.spec
+!MyChecklist.spec
 
 # Local application runtime data
 *.db

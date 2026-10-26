@@ -11,6 +11,13 @@ def _now() -> str:
 class SettingsRepository:
     """Persist validated local application preferences."""
 
+    DEFAULTS = {
+        "theme": "dark",
+        "reminders_enabled": "true",
+        "default_reminder_offset_minutes": "0",
+        "notify_missed_reminders": "true",
+    }
+
     def __init__(self, connection: sqlite3.Connection) -> None:
         self.connection = connection
 
@@ -28,3 +35,8 @@ class SettingsRepository:
 
     def all(self) -> dict[str, str]:
         return {row["key"]: row["value"] for row in self.connection.execute("SELECT key, value FROM settings")}
+
+    def seed_defaults(self) -> None:
+        for key, value in self.DEFAULTS.items():
+            if self.get(key) is None:
+                self.set(key, value)

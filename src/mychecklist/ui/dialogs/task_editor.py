@@ -7,7 +7,7 @@ from datetime import date
 from typing import Any
 
 from mychecklist.services.validation import ValidationError, validate_task_input
-from mychecklist.theme import DARK_COLORS, FONTS, SPACING, WINDOW
+from mychecklist.theme import COMPONENTS, DARK_COLORS, FONTS, SPACING, WINDOW
 
 REMINDER_OPTIONS = {
     "None": None,
@@ -49,7 +49,9 @@ class TaskEditorDialog:
         self.dialog.grab_set()
 
     def _build(self) -> None:
-        self.dialog.title("Edit Task" if self._initial else "Add Task")
+        self.dialog.title(
+            "Edit Task" if self._initial.get("id") or self._initial.get("series_id") else "Add Task"
+        )
         self.dialog.geometry("520x520")
         self.dialog.minsize(WINDOW["modal_min_width"], 480)
         self.dialog.configure(fg_color=DARK_COLORS["bg.surface"])
@@ -63,11 +65,12 @@ class TaskEditorDialog:
             ("due_time", "Due time (HH:MM, optional)"),
         )
         for row, (key, label) in enumerate(fields):
-            self.ctk.CTkLabel(self.dialog, text=label, font=FONTS["body"],
+            self.ctk.CTkLabel(self.dialog, text=label + (" *" if key in {"title", "due_date"} else ""),
+                              font=FONTS["label"],
                               text_color=DARK_COLORS["text.primary"]).grid(
                 row=row, column=0, padx=SPACING["space.3"], pady=SPACING["space.2"], sticky="w"
             )
-            entry = self.ctk.CTkEntry(self.dialog, height=WINDOW["control_height"])
+            entry = self.ctk.CTkEntry(self.dialog, **COMPONENTS["input"])
             entry.grid(row=row, column=1, padx=SPACING["space.3"], pady=SPACING["space.2"], sticky="ew")
             self._entries[key] = entry
         if hasattr(self._entries["title"], "bind"):
@@ -80,21 +83,21 @@ class TaskEditorDialog:
             ("reminder_offset_minutes", "Reminder", list(REMINDER_OPTIONS)),
         )
         for row, (key, label, values) in enumerate(options, start=len(fields)):
-            self.ctk.CTkLabel(self.dialog, text=label, font=FONTS["body"],
+            self.ctk.CTkLabel(self.dialog, text=label, font=FONTS["label"],
                               text_color=DARK_COLORS["text.primary"]).grid(
                 row=row, column=0, padx=SPACING["space.3"], pady=SPACING["space.2"], sticky="w"
             )
-            combo = self.ctk.CTkComboBox(self.dialog, values=values, height=WINDOW["control_height"])
+            combo = self.ctk.CTkComboBox(self.dialog, values=values, **COMPONENTS["input"])
             combo.grid(row=row, column=1, padx=SPACING["space.3"], pady=SPACING["space.2"], sticky="ew")
             self._combos[key] = combo
 
         button_row = len(fields) + len(options)
         self.ctk.CTkButton(self.dialog, text="Cancel", command=self.cancel,
-                           fg_color="transparent", hover_color=DARK_COLORS["bg.surface_hover"]).grid(
+                           **COMPONENTS["secondary_button"]).grid(
             row=button_row, column=0, padx=SPACING["space.3"], pady=SPACING["space.5"], sticky="ew"
         )
         self.ctk.CTkButton(self.dialog, text="Save", command=self.save,
-                           fg_color=DARK_COLORS["accent.primary"], hover_color=DARK_COLORS["accent.hover"]).grid(
+                           **COMPONENTS["primary_button"]).grid(
             row=button_row, column=1, padx=SPACING["space.3"], pady=SPACING["space.5"], sticky="ew"
         )
 

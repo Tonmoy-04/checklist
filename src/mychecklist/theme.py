@@ -56,6 +56,7 @@ FONTS = {
     "body_small": ("Segoe UI", 12, "normal"),
     "caption": ("Segoe UI", 11, "normal"),
     "button": ("Segoe UI", 13, "bold"),
+    "label": ("Segoe UI", 12, "bold"),
 }
 
 SPACING = {
@@ -82,6 +83,32 @@ WINDOW = {
     "control_radius": 8,
     "card_radius": 12,
     "panel_radius": 14,
+    "input_width": 150,
+    "search_height": 40,
+}
+
+COMPONENTS = {
+    "primary_button": {
+        "fg_color": DARK_COLORS["accent.primary"],
+        "hover_color": DARK_COLORS["accent.hover"],
+        "text_color": DARK_COLORS["text.primary"],
+        "font": FONTS["button"],
+        "corner_radius": WINDOW["control_radius"],
+    },
+    "secondary_button": {
+        "fg_color": DARK_COLORS["bg.surface"],
+        "hover_color": DARK_COLORS["bg.surface_hover"],
+        "text_color": DARK_COLORS["text.primary"],
+        "font": FONTS["button"],
+        "corner_radius": WINDOW["control_radius"],
+    },
+    "input": {
+        "fg_color": DARK_COLORS["bg.input"],
+        "border_color": DARK_COLORS["border.default"],
+        "border_width": 1,
+        "height": WINDOW["control_height"],
+        "corner_radius": WINDOW["control_radius"],
+    },
 }
 
 
