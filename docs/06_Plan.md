@@ -26,15 +26,15 @@
 
 ## Phase 2 — Application services
 
-- [ ] **P2.1** Implement input validation for title, date, time, category, priority, recurrence, and reminder offsets.
-- [ ] **P2.2** Implement task service independent of CustomTkinter.
-- [ ] **P2.3** Implement view query rules for Today, Upcoming, Overdue, All Tasks, and Completed.
-- [ ] **P2.4** Implement search, category/priority filters, and stable sorting.
-- [ ] **P2.5** Implement statistics service and test zero-denominator/historical calculations.
-- [ ] **P2.6** Implement reminder service with injected clock and deduplicated delivery records.
-- [ ] **P2.7** Implement notification interface and Plyer adapter with failure handling.
-- [ ] **P2.8** Implement SQLite online backup and validated restore flow.
-- [ ] **P2.9** Add service tests for edge cases, reminder retry policy, and recurring task idempotency.
+- [x] **P2.1** Implement input validation for title, date, time, category, priority, recurrence, and reminder offsets.
+- [x] **P2.2** Implement task service independent of CustomTkinter.
+- [x] **P2.3** Implement view query rules for Today, Upcoming, Overdue, All Tasks, and Completed.
+- [x] **P2.4** Implement search, category/priority filters, and stable sorting.
+- [x] **P2.5** Implement statistics service and test zero-denominator/historical calculations.
+- [x] **P2.6** Implement reminder service with injected clock and deduplicated delivery records.
+- [x] **P2.7** Implement notification interface and Plyer adapter with failure handling.
+- [x] **P2.8** Implement SQLite online backup and validated restore flow.
+- [x] **P2.9** Add service tests for edge cases, reminder retry policy, and recurring task idempotency.
 
 ## Phase 3 — UI integration
 
@@ -92,6 +92,8 @@
 | 2026-10-27 | P0.5 | `README.md` | README content PowerShell check | Passed; setup, run, test, data locations, backup/restore expectations, architecture, and closed-app reminder limitation are documented. |
 | 2026-10-27 | P0.6 | `src/mychecklist/config.py`, `src/mychecklist/logging_config.py`, `tests/unit/test_config.py`, `tests/unit/test_logging_config.py` | `python -m compileall -q src\mychecklist tests\unit`; dependency-free configuration/logging smoke check; generated-cache cleanup | Implementation checks passed. `python -m pytest tests\unit -q` could not start because pytest is not installed under the available Python 3.14.0 environment. |
 | 2026-10-27 | P1.1-P1.10 | `src/mychecklist/database/connection.py`, `src/mychecklist/database/migrations.py`, `src/mychecklist/services/recurrence_service.py`, `src/mychecklist/repositories/category_repository.py`, `src/mychecklist/repositories/task_repository.py`, `tests/integration/test_database.py` | Dependency-free Phase 1 database smoke check; `python -m compileall -q src\mychecklist tests\integration`; generated-cache cleanup | Passed: foreign keys, busy timeout, versioned schema, indexes, integrity check, idempotent category seeding, CRUD/soft-stop transactions, recurrence calculations, completion/reopen, and duplicate prevention verified. Pytest remains unavailable in the Python 3.14.0 environment. |
+| 2026-10-27 | P2.1 | `src/mychecklist/services/validation.py`, `tests/unit/test_validation.py` | Dependency-free validation smoke check; `python -m compileall -q src\mychecklist tests\unit`; generated-cache cleanup | Passed; normalized valid input, allowed past dates and optional time, rejected invalid fields, and reported all field errors. Pytest remains unavailable in the Python 3.14.0 environment. |
+| 2026-10-27 | P2.2-P2.9 | `src/mychecklist/services/task_service.py`, `src/mychecklist/services/statistics_service.py`, `src/mychecklist/services/reminder_service.py`, `src/mychecklist/repositories/reminder_repository.py`, `src/mychecklist/notifications/base.py`, `src/mychecklist/notifications/plyer_adapter.py`, `src/mychecklist/database/backup.py`, `src/mychecklist/repositories/task_repository.py`, `tests/unit/test_services.py` | Dependency-free Phase 2 service smoke check; `python -m compileall -q src\mychecklist tests\unit tests\integration`; generated-cache cleanup | Passed; task use cases, all documented views, search/filter/sort, zero-safe statistics, historical counts, named breakdowns, injected-clock reminder offsets/deduplication, notification failure handling, online backup, validated restore, pre-restore backup, and service regression cases verified. Pytest remains unavailable in the Python 3.14.0 environment. |
 
 ## Decision log
 
