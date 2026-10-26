@@ -13,16 +13,16 @@
 
 ## Phase 1 — Database and data model (no UI dependency)
 
-- [ ] **P1.1** Implement SQLite connection factory with foreign keys and busy timeout.
-- [ ] **P1.2** Implement versioned migrations and schema creation from `05_Schema.md`.
-- [ ] **P1.3** Seed built-in categories idempotently.
-- [ ] **P1.4** Implement category repository and validation.
-- [ ] **P1.5** Implement task-series and occurrence repositories with parameterized SQL.
-- [ ] **P1.6** Implement task create/update/cancel/delete semantics and transaction boundaries.
-- [ ] **P1.7** Implement recurrence date calculator (daily, weekly, monthly end-of-month clamp).
-- [ ] **P1.8** Implement completion/reopen and idempotent next-occurrence creation.
-- [ ] **P1.9** Implement indexes and database integrity checks.
-- [ ] **P1.10** Add unit/integration tests for schema, constraints, migrations, and repository CRUD.
+- [x] **P1.1** Implement SQLite connection factory with foreign keys and busy timeout.
+- [x] **P1.2** Implement versioned migrations and schema creation from `05_Schema.md`.
+- [x] **P1.3** Seed built-in categories idempotently.
+- [x] **P1.4** Implement category repository and validation.
+- [x] **P1.5** Implement task-series and occurrence repositories with parameterized SQL.
+- [x] **P1.6** Implement task create/update/cancel/delete semantics and transaction boundaries.
+- [x] **P1.7** Implement recurrence date calculator (daily, weekly, monthly end-of-month clamp).
+- [x] **P1.8** Implement completion/reopen and idempotent next-occurrence creation.
+- [x] **P1.9** Implement indexes and database integrity checks.
+- [x] **P1.10** Add unit/integration tests for schema, constraints, migrations, and repository CRUD.
 
 ## Phase 2 — Application services
 
@@ -91,6 +91,7 @@
 | 2026-10-27 | P0.4 | `.gitignore` | Required-pattern PowerShell check; foundation-file presence check | Passed; virtual environments, Python/test caches, build artifacts, logs, local database files, and common coverage/IDE artifacts are ignored. |
 | 2026-10-27 | P0.5 | `README.md` | README content PowerShell check | Passed; setup, run, test, data locations, backup/restore expectations, architecture, and closed-app reminder limitation are documented. |
 | 2026-10-27 | P0.6 | `src/mychecklist/config.py`, `src/mychecklist/logging_config.py`, `tests/unit/test_config.py`, `tests/unit/test_logging_config.py` | `python -m compileall -q src\mychecklist tests\unit`; dependency-free configuration/logging smoke check; generated-cache cleanup | Implementation checks passed. `python -m pytest tests\unit -q` could not start because pytest is not installed under the available Python 3.14.0 environment. |
+| 2026-10-27 | P1.1-P1.10 | `src/mychecklist/database/connection.py`, `src/mychecklist/database/migrations.py`, `src/mychecklist/services/recurrence_service.py`, `src/mychecklist/repositories/category_repository.py`, `src/mychecklist/repositories/task_repository.py`, `tests/integration/test_database.py` | Dependency-free Phase 1 database smoke check; `python -m compileall -q src\mychecklist tests\integration`; generated-cache cleanup | Passed: foreign keys, busy timeout, versioned schema, indexes, integrity check, idempotent category seeding, CRUD/soft-stop transactions, recurrence calculations, completion/reopen, and duplicate prevention verified. Pytest remains unavailable in the Python 3.14.0 environment. |
 
 ## Decision log
 
