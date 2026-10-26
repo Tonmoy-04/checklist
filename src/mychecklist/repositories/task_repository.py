@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
-from datetime import date, datetime, timezone
+from datetime import date, datetime, time, timezone
 
 from mychecklist.services.recurrence_service import next_occurrence_date
 
@@ -57,6 +57,37 @@ class TaskRepository:
             parameters = (status,)
         query += " ORDER BY o.due_date, o.due_time, o.id"
         return list(self.connection.execute(query, parameters))
+
+    def list_for_view(self, view: str, today: date, now: datetime | None = None) -> list[sqlite3.Row]:
+        """Load only the persisted occurrences needed by one navigation view."""
+        base = (
+            "SELECT o.*, s.title, s.category_id, s.priority, s.recurrence, "
+            "s.is_active AS series_is_active "
+            "FROM task_occurrences o JOIN task_series s ON s.id=o.series_id "
+        )
+        parameters: tuple[object, ...]
+        if view == "today":
+            where = "o.status='open' AND s.is_active=1 AND o.due_date=?"
+            parameters = (today.isoformat(),)
+        elif view == "upcoming":
+            where = "o.status='open' AND s.is_active=1 AND o.due_date>?"
+            parameters = (today.isoformat(),)
+        elif view == "overdue":
+            current = now or datetime.now()
+            where = (
+                "o.status='open' AND s.is_active=1 AND "
+                "(o.due_date<? OR (o.due_date=? AND o.due_time IS NOT NULL AND o.due_time<?))"
+            )
+            parameters = (today.isoformat(), today.isoformat(), current.strftime("%H:%M"))
+        elif view == "all":
+            where = "o.status='open' AND s.is_active=1"
+            parameters = ()
+        elif view == "completed":
+            where = "o.status='completed'"
+            parameters = ()
+        else:
+            raise ValueError(f"unsupported view: {view}")
+        return list(self.connection.execute(base + "WHERE " + where + " ORDER BY o.due_date, o.due_time, o.id", parameters))
 
     def update_series(self, series_id: int, *, title: str, category_id: int, priority: str,
                       recurrence: str, start_date: date, due_time: str | None = None,

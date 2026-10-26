@@ -14,6 +14,9 @@ class TaskService:
 
     def create(self, **fields: Any) -> int:
         values = self._validate(fields)
+        return self.create_validated(values)
+
+    def create_validated(self, values: ValidatedTaskInput) -> int:
         self._require_category(values.category_id)
         return self.repository.create_series(
             values.title, values.category_id, values.priority, values.recurrence,
@@ -22,6 +25,9 @@ class TaskService:
 
     def update(self, series_id: int, **fields: Any) -> None:
         values = self._validate(fields)
+        self.update_validated(series_id, values)
+
+    def update_validated(self, series_id: int, values: ValidatedTaskInput) -> None:
         self._require_category(values.category_id)
         self.repository.update_series(
             series_id, title=values.title, category_id=values.category_id,
@@ -67,6 +73,8 @@ def _due_datetime(row: Any) -> datetime:
 def query_view(repository: TaskRepository, view: str, today: date,
                now: datetime | None = None) -> list[Any]:
     """Return active occurrence rows for a documented navigation view."""
+    if hasattr(repository, "list_for_view"):
+        return repository.list_for_view(view, today, now)
     rows = repository.list_occurrences()
     active = [row for row in rows if row["status"] == "open" and row["series_is_active"]]
     if view == "today":
@@ -96,7 +104,7 @@ def filter_and_sort(rows: list[Any], *, search: str = "", category_id: int | Non
         order = {"high": 0, "medium": 1, "low": 2}
         return sorted(filtered, key=lambda row: (order[row["priority"]], row["due_date"], row["id"]))
     if sort_by == "created":
-        return sorted(filtered, key=lambda row: (row["created_at"], row["id"]))
+        return sorted(filtered, key=lambda row: (row["created_at"], row["id"]), reverse=True)
     if sort_by != "due":
         raise ValueError(f"unsupported sort: {sort_by}")
     return sorted(filtered, key=lambda row: (row["due_date"], row["due_time"] or "23:59", row["id"]))
