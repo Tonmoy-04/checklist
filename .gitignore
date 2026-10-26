@@ -13,6 +13,7 @@ __pycache__/
 build/
 dist/
 *.spec
+!MyChecklist.spec
 
 # Local application runtime data
 *.db

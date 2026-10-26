@@ -49,7 +49,9 @@ class TaskEditorDialog:
         self.dialog.grab_set()
 
     def _build(self) -> None:
-        self.dialog.title("Edit Task" if self._initial else "Add Task")
+        self.dialog.title(
+            "Edit Task" if self._initial.get("id") or self._initial.get("series_id") else "Add Task"
+        )
         self.dialog.geometry("520x520")
         self.dialog.minsize(WINDOW["modal_min_width"], 480)
         self.dialog.configure(fg_color=DARK_COLORS["bg.surface"])

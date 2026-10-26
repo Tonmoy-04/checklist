@@ -9,9 +9,10 @@ telemetry, or network requirement.
 
 The application is being implemented incrementally according to
 [`docs/06_Plan.md`](docs/06_Plan.md). The package and foundation configuration
-and the Phase 3 task-list, statistics, settings, and reminder-polling
-components are implemented. The package entry point and release packaging
-remain planned work.
+and the Phase 3 task-list, statistics, settings, reminder-polling components,
+application entry point, and Windows packaging configuration are implemented.
+Release validation still requires the manual Windows-account and DPI checks
+listed below.
 
 ## Requirements
 
@@ -40,14 +41,12 @@ versions.
 
 ## Run
 
-The application entry point will be exposed as implementation progresses:
-
 ```powershell
 python -m mychecklist
 ```
 
-At the current foundation stage, the entry-point module and UI have not yet
-been implemented.
+The command resolves the production database under `%LOCALAPPDATA%` and does
+not create application data merely by importing `mychecklist`.
 
 ## Test
 
@@ -78,21 +77,60 @@ The application never uses its executable directory as the mutable database
 location. Data directories are created during application startup, not when
 the configuration module is imported.
 
+## Build the Windows executable
+
+From the activated Python 3.12 environment:
+
+```powershell
+python -m pip install -e .[dev]
+python -m PyInstaller --clean --noconfirm MyChecklist.spec
+```
+
+The release executable is written to `dist\MyChecklist.exe` by the one-file
+spec configuration. Use `--console` only for a temporary diagnostic
+build if startup logging needs to be observed.
+
 ## Backup and restore
 
-The planned backup flow uses SQLite's online backup API and stores backups in
-the application-data backup directory. Restore will validate SQLite integrity
-and the expected schema, create a pre-restore snapshot, require explicit
-confirmation, and preserve the current database if restore fails.
-
-Backup and restore are not implemented yet; do not treat copying a live
-database file as a valid backup.
+The backup flow uses SQLite's online backup API and stores backups in the
+application-data backup directory. Restore validates SQLite integrity and the
+expected schema, creates a pre-restore snapshot, requires explicit
+confirmation, and preserves the current database if validation fails. Do not
+copy a live SQLite file while it is being written as a substitute for this
+flow.
 
 ## Reminder limitation
 
 Version 1 reminders are checked while MyChecklist is open. The application
 does not claim to deliver reminders while closed. Closed-app reminders require
 a separately implemented and tested Windows Task Scheduler integration.
+
+## Upgrade and diagnostics
+
+For an upgrade, close MyChecklist, install the new release, and launch it
+against the existing `%LOCALAPPDATA%\MyChecklist\checklist.db`. Migrations
+run transactionally before the UI is shown. Keep a verified backup before
+upgrading. A future unsupported schema version stops startup without
+rewriting the database.
+
+Startup and reminder diagnostics are written to
+`%LOCALAPPDATA%\MyChecklist\logs\app.log`. Preserve that file and the
+database path when reporting a failure. The executable never stores mutable
+database or log files in its installation directory or PyInstaller's
+temporary extraction directory.
+
+Before publishing a Windows release, manually verify:
+
+1. A clean Windows account creates `%LOCALAPPDATA%\MyChecklist\` on first run.
+2. Existing data remains available after installing an upgrade.
+3. The GUI launches at 100%, 125%, and 150% display scaling.
+4. The window remains usable at 850x580 and task-editor controls remain visible.
+5. Backup and restore work with a copy of a real database.
+6. Closing the app stops reminder polling and leaves no locked database handle.
+7. Notifications behave as documented, including the closed-app limitation.
+
+These account, DPI, and packaged-GUI checks are not claimed as automated
+verification in this development environment.
 
 ## Architecture
 

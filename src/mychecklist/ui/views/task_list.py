@@ -38,6 +38,7 @@ class TaskListView:
         confirm_delete: Callable[[], bool],
         on_error: Callable[[str], None],
         show_error: Callable[[str], None] | None = None,
+        on_add_task: Callable[[Callable[[], None]], None] | None = None,
     ) -> None:
         if view not in VIEW_COPY:
             raise ValueError(f"unsupported task-list view: {view}")
@@ -53,6 +54,7 @@ class TaskListView:
         self.confirm_delete = confirm_delete
         self.on_error = on_error
         self.show_error = show_error or on_error
+        self.on_add_task = on_add_task or (lambda _refresh: None)
         self.search = ""
         self.category_id: int | None = None
         self.priority: str | None = None
@@ -65,12 +67,23 @@ class TaskListView:
         self.container = self.ctk.CTkFrame(self.parent, fg_color=DARK_COLORS["bg.canvas"])
         self.container.grid(row=0, column=0, sticky="nsew")
         self.container.grid_columnconfigure(0, weight=1)
+        self.container.grid_columnconfigure(1, weight=0)
         self.container.grid_rowconfigure(3, weight=1)
         self.title_label = self.ctk.CTkLabel(
             self.container, text=title, anchor="w", font=FONTS["display"],
             text_color=DARK_COLORS["text.primary"],
         )
         self.title_label.grid(row=0, column=0, padx=SPACING["space.5"], pady=(SPACING["space.5"], 0), sticky="ew")
+        self.add_button = self.ctk.CTkButton(
+            self.container,
+            text="+ Add Task",
+            height=36,
+            command=lambda: self.on_add_task(self.refresh),
+        )
+        self.add_button.grid(
+            row=0, column=1, padx=(SPACING["space.2"], SPACING["space.5"]),
+            pady=(SPACING["space.5"], 0), sticky="e",
+        )
         self.helper_label = self.ctk.CTkLabel(
             self.container, text=helper, anchor="w", font=FONTS["body"],
             text_color=DARK_COLORS["text.secondary"],
@@ -83,6 +96,8 @@ class TaskListView:
         self.search_entry.grid(row=0, column=0, padx=(0, SPACING["space.2"]), sticky="ew")
         if hasattr(self.search_entry, "bind"):
             self.search_entry.bind("<Return>", lambda _event: self.refresh())
+        if hasattr(self.container, "bind"):
+            self.container.bind("<Control-n>", lambda _event: self.on_add_task(self.refresh))
         self.category_combo = self.ctk.CTkComboBox(
             self.filter_frame, values=["All categories", *self.category_names.values()],
             command=self._category_changed,
@@ -197,6 +212,7 @@ def build_task_route_handlers(
     on_edit: Callable[[Any], None],
     confirm_delete: Callable[[], bool],
     on_error: Callable[[str], None],
+    on_add_task: Callable[[Callable[[], None]], None] | None = None,
 ) -> dict[str, Callable[[Any], None]]:
     """Build shell-compatible handlers for the five task-list routes."""
     views: dict[str, TaskListView] = {}
@@ -212,6 +228,7 @@ def build_task_route_handlers(
                 today=today, now=now, on_edit=on_edit,
                 confirm_delete=confirm_delete, on_error=on_error,
                 show_error=on_error,
+                on_add_task=on_add_task,
             )
         return render
 

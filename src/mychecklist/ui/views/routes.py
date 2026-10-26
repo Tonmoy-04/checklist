@@ -28,13 +28,14 @@ def build_phase3_route_handlers(
     on_edit: Callable[[Any], None],
     confirm_delete: Callable[[], bool],
     on_error: Callable[[str], None],
+    on_add_task: Callable[[Callable[[], None]], None] | None = None,
     choose_restore_file: Callable[[], Path | None] | None = None,
     confirm_restore: Callable[[], bool] | None = None,
 ) -> dict[str, Callable[[Any], None]]:
     handlers = build_task_route_handlers(
         ctk_module=ctk_module, repository=repository, task_service=task_service,
         category_names=category_names, today=today, now=now, on_edit=on_edit,
-        confirm_delete=confirm_delete, on_error=on_error,
+        confirm_delete=confirm_delete, on_error=on_error, on_add_task=on_add_task,
     )
 
     def render_statistics(parent: Any) -> None:

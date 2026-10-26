@@ -68,3 +68,15 @@ def test_task_editor_keeps_form_open_when_persistence_callback_fails():
     assert dialog.save() is False
     assert errors == ["database unavailable"]
     assert not dialog.dialog.destroyed
+
+
+def test_task_editor_create_mode_can_have_a_default_category():
+    saved = []
+    dialog = TaskEditorDialog(
+        Widget(), FakeCtk, categories={1: "Personal"}, on_save=saved.append,
+        initial={"title": "New task", "category_id": 1},
+    )
+
+    assert dialog.dialog.window_title == "Add Task"
+    assert dialog.save() is True
+    assert saved[0].category_id == 1
