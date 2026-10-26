@@ -48,7 +48,7 @@ class TaskRepository:
 
     def list_occurrences(self, status: str | None = None) -> list[sqlite3.Row]:
         query = (
-            "SELECT o.*, s.title, s.category_id, s.priority, s.recurrence "
+            "SELECT o.*, s.title, s.category_id, s.priority, s.recurrence, s.is_active AS series_is_active "
             "FROM task_occurrences o JOIN task_series s ON s.id=o.series_id"
         )
         parameters: tuple[object, ...] = ()
