@@ -1,0 +1,1 @@
+"""MyChecklist application package."""

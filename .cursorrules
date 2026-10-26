@@ -1,0 +1,48 @@
+# MyChecklist — Cursor Rules
+
+## Required context
+
+Before any implementation task, read all six files:
+- `docs/01_PRD.md`
+- `docs/02_AppFlow.md`
+- `docs/03_UI_Spec.md`
+- `docs/04_TRD.md`
+- `docs/05_Schema.md`
+- `docs/06_Plan.md`
+
+Then inspect the relevant source and tests. These documents are the source of truth. If they conflict, stop and report the conflict before coding.
+
+## Architecture constraints
+
+- Windows desktop app: Python 3.12.x + CustomTkinter + SQLite.
+- Local-first, single-user, offline-capable. No web server, API, auth, cloud sync, telemetry, or RLS.
+- Separate UI, application services, repositories, database/migrations, and notification adapter.
+- Database location: `%LOCALAPPDATA%\\MyChecklist\\checklist.db`.
+- Use parameterized SQL, transactions, foreign keys, versioned migrations, and safe backup/restore.
+- Preserve completed recurring occurrences and prevent duplicate recurrence/reminder records.
+- Follow `docs/03_UI_Spec.md` tokens and component states.
+
+## Task workflow
+
+1. Choose the next unchecked item in `docs/06_Plan.md` and respect dependencies.
+2. Identify acceptance criteria and inspect related code/tests.
+3. Add/update tests for the behavior.
+4. Implement the smallest coherent change.
+5. Run relevant tests and report actual outcomes.
+6. Review the diff for unintended changes and data-loss risks.
+7. Update `docs/06_Plan.md` after every completed checklist item. Mark complete only when code and verification pass. Add the date, files changed, test command, and result to Progress Log.
+8. Report item IDs, changed files, test results, plan update, and blockers.
+
+## Do not
+
+- Start coding before reading all six docs.
+- Invent requirements or silently change locked decisions.
+- Remove or weaken tests to obtain a pass.
+- Claim a command/test succeeded unless it was run successfully.
+- Put SQL in UI modules.
+- Use Tk widgets from background threads.
+- Store mutable app data beside the packaged executable.
+- Delete/overwrite user data without confirmation and a safe backup.
+- Claim closed-app reminders work before implementation and testing.
+
+Keep changes scoped, use type hints where practical, make time-dependent logic testable with an injected clock, and update specifications if approved scope changes.
