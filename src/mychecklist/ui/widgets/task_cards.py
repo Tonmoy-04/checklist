@@ -39,7 +39,11 @@ class TaskCard:
             corner_radius=WINDOW["card_radius"],
             fg_color=DARK_COLORS["bg.surface"],
             border_width=1,
-            border_color=DARK_COLORS["border.default"],
+            border_color=(
+                DARK_COLORS["status.success"]
+                if row["status"] == "completed"
+                else DARK_COLORS["border.default"]
+            ),
             height=WINDOW["task_row_min_height"],
         )
         self.frame.grid_columnconfigure(1, weight=1)
@@ -78,6 +82,8 @@ class TaskCard:
 
         self.edit_button = self.ctk.CTkButton(
             self.frame, text="Edit", width=64, height=WINDOW["control_height"],
+            fg_color=DARK_COLORS["bg.surface_hover"],
+            hover_color=DARK_COLORS["accent.hover"],
             command=lambda: self.on_edit(self.row),
         )
         self.edit_button.grid(row=0, column=2, padx=SPACING["space.1"], pady=SPACING["space.2"])
@@ -92,7 +98,12 @@ class TaskCard:
         category = self.category_names.get(self.row["category_id"], "Unknown category")
         due = self.row["due_date"] + (f" {self.row['due_time']}" if self.row["due_time"] else "")
         status = "Completed" if self.row["status"] == "completed" else "Open"
-        return f"{category} | {self.row['priority'].title()} | Due {due} | {status}"
+        recurrence_value = self.row.get("recurrence", "none") if hasattr(self.row, "get") else self.row["recurrence"]
+        recurrence = recurrence_value.title() if recurrence_value != "none" else ""
+        parts = [category, self.row["priority"].title(), f"Due {due}", status]
+        if recurrence:
+            parts.append(f"Repeats {recurrence}")
+        return "  |  ".join(parts)
 
     def toggle_completion(self) -> None:
         try:

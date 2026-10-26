@@ -5,14 +5,32 @@ academic, learning, health, and work tasks. It uses Python 3.12.x,
 CustomTkinter, SQLite, and Plyer, with no server, account, cloud sync,
 telemetry, or network requirement.
 
-## Status
+## Version and status
 
-The application is being implemented incrementally according to
-[`docs/06_Plan.md`](docs/06_Plan.md). The package and foundation configuration
-and the Phase 3 task-list, statistics, settings, reminder-polling components,
-application entry point, and Windows packaging configuration are implemented.
-Release validation still requires the manual Windows-account and DPI checks
-listed below.
+MyChecklist v1.0.0 is a local-first Windows desktop task planner. The
+implemented release includes task CRUD, recurring occurrences, task views and
+filters, completion history, statistics, in-app reminder polling, local
+settings, and SQLite backup/restore.
+
+The release is a portable Windows executable, not an installer. Download
+`MyChecklist.exe` from the GitHub release assets, save it to a trusted folder,
+and launch it. No server, account, cloud sync, telemetry, or network access is
+required.
+
+## Features
+
+- Create, edit, complete, reopen, and cancel tasks.
+- Today, Upcoming, Overdue, All Tasks, and Completed views.
+- Search, category/priority filters, and sorting.
+- Daily, weekly, and monthly recurrence with preserved occurrence history.
+- Statistics for daily progress, completion rate, and historical breakdowns.
+- Local reminders while the application is open.
+- Local theme/reminder settings and validated SQLite backup/restore.
+- AppData storage outside the executable directory.
+
+There is no bundled screenshot because a checked-in, genuine product screenshot
+is not currently available. Do not infer GUI appearance from the executable
+without running it.
 
 ## Requirements
 
@@ -57,6 +75,13 @@ python -m pytest
 ```
 
 Tests use temporary directories and must never modify the production database.
+
+## First launch
+
+On first launch, MyChecklist creates its database, built-in categories, default
+settings, logs, and backup directory under `%LOCALAPPDATA%\MyChecklist\`.
+Existing data is opened in place on later launches and upgrades. Keep a
+verified backup before installing an upgrade.
 
 ## Data locations
 
@@ -105,6 +130,30 @@ Version 1 reminders are checked while MyChecklist is open. The application
 does not claim to deliver reminders while closed. Closed-app reminders require
 a separately implemented and tested Windows Task Scheduler integration.
 
+## Release checks and known limitations
+
+The release executable was built on Windows 11 with Python 3.12.10 and
+PyInstaller 6.11.1. Automated tests pass, but the following require manual
+verification on the target machine:
+
+- Packaged GUI launch on a clean Windows account.
+- Window resizing at 850x580 and larger.
+- 100%, 125%, and 150% display scaling.
+- Desktop notification behavior.
+- Backup and restore using a copy of real user data.
+- Clean shutdown while reminder polling is active.
+
+Reminders are not guaranteed while the app is closed. No Windows scheduled
+task or installer is included in v1.0.0.
+
+## Troubleshooting
+
+If startup fails, close the app and preserve
+`%LOCALAPPDATA%\MyChecklist\logs\app.log` and the database path when reporting
+the problem. Do not delete the database to troubleshoot. If the database is
+locked or corrupt, make a copy first and use a validated backup/restore path.
+An unsupported future schema version stops startup without rewriting the file.
+
 ## Upgrade and diagnostics
 
 For an upgrade, close MyChecklist, install the new release, and launch it
@@ -143,3 +192,15 @@ CustomTkinter UI -> application services -> repositories -> SQLite
 
 See the six documents in [`docs/`](docs/) for the product, flow, UI, technical,
 schema, and implementation-plan source of truth.
+
+## Contributing
+
+Create a Python 3.12 virtual environment, install the development dependencies,
+run the full test suite, and preserve the layered UI/service/repository
+architecture. See [`docs/04_TRD.md`](docs/04_TRD.md) and
+[`docs/06_Plan.md`](docs/06_Plan.md) before making changes.
+
+## License
+
+No license has been selected for this repository. Until the project owner adds
+a license, the repository should not be treated as open-source software.

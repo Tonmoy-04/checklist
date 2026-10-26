@@ -105,6 +105,8 @@ class MainWindow:
                 fg_color=DARK_COLORS["accent.primary"] if active else "transparent",
                 text_color=DARK_COLORS["text.primary"] if active else DARK_COLORS["text.secondary"],
             )
+        for child in self.content.winfo_children():
+            child.destroy()
         handler = self.route_handlers.get(route)
         if handler is not None:
             handler(self.content)

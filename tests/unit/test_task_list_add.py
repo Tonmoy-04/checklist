@@ -7,9 +7,10 @@ class Widget:
         self.kwargs = kwargs
         self.value = ""
         self.commands = []
+        self.grid_calls = []
 
     def grid(self, **kwargs):
-        pass
+        self.grid_calls.append(kwargs)
 
     def grid_columnconfigure(self, *args, **kwargs):
         pass
@@ -65,3 +66,8 @@ def test_task_list_exposes_add_task_and_keyboard_callback():
     view.add_button.kwargs["command"]()
     assert refresh_callbacks == [view.refresh]
     assert ("<Control-n>", view.container.commands[0][1]) in view.container.commands
+    assert view.search_entry.grid_calls[0]["row"] == 0
+    assert view.category_combo.grid_calls[0]["row"] == 1
+    assert view.priority_combo.grid_calls[0]["row"] == 1
+    assert view.sort_combo.grid_calls[0]["row"] == 1
+    assert view.clear_button.grid_calls[0]["row"] == 1
