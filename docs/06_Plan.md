@@ -6,10 +6,10 @@
 
 - [x] **P0.1** Read all six documents and identify conflicts before coding.
 - [x] **P0.2** Create the `src/mychecklist/` package and `tests/` structure from `04_TRD.md`.
-- [ ] **P0.3** Add pinned runtime/dev dependencies and `pyproject.toml`.
-- [ ] **P0.4** Add `.gitignore` for `.venv/`, `__pycache__/`, `.pytest_cache/`, build artifacts, logs, and local DB files.
-- [ ] **P0.5** Add a README with setup, run, test, data-location, backup, and known reminder limitations.
-- [ ] **P0.6** Add logging and configuration helpers; verify AppData paths without writing beside the executable.
+- [x] **P0.3** Add pinned runtime/dev dependencies and `pyproject.toml`.
+- [x] **P0.4** Add `.gitignore` for `.venv/`, `__pycache__/`, `.pytest_cache/`, build artifacts, logs, and local DB files.
+- [x] **P0.5** Add a README with setup, run, test, data-location, backup, and known reminder limitations.
+- [x] **P0.6** Add logging and configuration helpers; verify AppData paths without writing beside the executable.
 
 ## Phase 1 — Database and data model (no UI dependency)
 
@@ -87,6 +87,10 @@
 |---|---|---|---|---|
 | 2026-10-27 | P0.1 | `docs/06_Plan.md` | Read `docs/01_PRD.md` through `docs/06_Plan.md`, plus `README.md`, `CLAUDE.md`, and `.cursorrules`; inspected workspace contents | Passed; no specification conflicts found, and implementation has not started. |
 | 2026-10-27 | P0.2 | `src/mychecklist/**/__init__.py`, `tests/unit/.gitkeep`, `tests/integration/.gitkeep`, `tests/ui/.gitkeep` | Structural PowerShell check; `python -m compileall -q src\mychecklist`; explicit generated-cache cleanup | Passed; all documented package boundaries and test directories are present, with no feature modules created. |
+| 2026-10-27 | P0.3 | `requirements.txt`, `requirements-dev.txt`, `pyproject.toml` | Dependency-pin PowerShell check; `tomllib` configuration check; `python -m pip install --dry-run -r requirements-dev.txt` | Configuration checks passed. Dependency dry-run is blocked by the environment's Python 3.14.0 interpreter; the locked PyInstaller 6.11.1 release has no compatible distribution. Pins were preserved per TRD. |
+| 2026-10-27 | P0.4 | `.gitignore` | Required-pattern PowerShell check; foundation-file presence check | Passed; virtual environments, Python/test caches, build artifacts, logs, local database files, and common coverage/IDE artifacts are ignored. |
+| 2026-10-27 | P0.5 | `README.md` | README content PowerShell check | Passed; setup, run, test, data locations, backup/restore expectations, architecture, and closed-app reminder limitation are documented. |
+| 2026-10-27 | P0.6 | `src/mychecklist/config.py`, `src/mychecklist/logging_config.py`, `tests/unit/test_config.py`, `tests/unit/test_logging_config.py` | `python -m compileall -q src\mychecklist tests\unit`; dependency-free configuration/logging smoke check; generated-cache cleanup | Implementation checks passed. `python -m pytest tests\unit -q` could not start because pytest is not installed under the available Python 3.14.0 environment. |
 
 ## Decision log
 

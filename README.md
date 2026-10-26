@@ -1,24 +1,105 @@
-# MyChecklist — Context Architecture
+# MyChecklist
 
-This bundle contains the six specification documents and root instructions for Claude Code and Cursor. It is an architecture package, not the completed application source code.
+MyChecklist is a local-first Windows desktop task planner for personal,
+academic, learning, health, and work tasks. It uses Python 3.12.x,
+CustomTkinter, SQLite, and Plyer, with no server, account, cloud sync,
+telemetry, or network requirement.
 
-## Contents
+## Status
 
-- `docs/01_PRD.md` — product goals, stories, acceptance criteria, non-goals
-- `docs/02_AppFlow.md` — screens, actions, state transitions, error/empty states
-- `docs/03_UI_Spec.md` — exact UI tokens, typography, spacing, component states
-- `docs/04_TRD.md` — locked stack, architecture, dependencies, security, testing
-- `docs/05_Schema.md` — relational SQLite schema, constraints, indexes, migration and backup rules
-- `docs/06_Plan.md` — sequential implementation checklist and progress log
-- `CLAUDE.md` — Claude Code context and workflow instructions
-- `.cursorrules` — Cursor context and workflow instructions
+The application is being implemented incrementally according to
+[`docs/06_Plan.md`](docs/06_Plan.md). The package and foundation configuration
+are present; the database, services, and UI are not yet complete.
 
-## Use
+## Requirements
 
-1. Extract this folder into the root of your MyChecklist repository.
-2. Open the repository root in Claude Code or Cursor.
-3. Ask the agent to read the mandatory documents and begin only the next unchecked item in `docs/06_Plan.md`.
-4. Review changes and test results after every item.
-5. Keep `docs/06_Plan.md` updated as work progresses.
+- Windows 10 or 11
+- 64-bit CPython 3.12.x
+- A virtual environment
 
-The current specification deliberately excludes authentication, remote APIs, cloud sync, and RLS because MyChecklist is a single-user local desktop application.
+Dependency pins are defined in [`requirements.txt`](requirements.txt) and
+[`requirements-dev.txt`](requirements-dev.txt).
+
+## Setup
+
+From the repository root in PowerShell:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+python -m pip install -e .
+```
+
+The project targets Python 3.12.x. The pinned PyInstaller release is part of
+the reproducible Windows build baseline and may not resolve on newer Python
+versions.
+
+## Run
+
+The application entry point will be exposed as implementation progresses:
+
+```powershell
+python -m mychecklist
+```
+
+At the current foundation stage, the entry-point module and UI have not yet
+been implemented.
+
+## Test
+
+Run the complete available test suite from the repository root:
+
+```powershell
+python -m pytest
+```
+
+Tests use temporary directories and must never modify the production database.
+
+## Data locations
+
+The production database is stored at:
+
+```text
+%LOCALAPPDATA%\MyChecklist\checklist.db
+```
+
+Backups and logs are stored under:
+
+```text
+%LOCALAPPDATA%\MyChecklist\backups\
+%LOCALAPPDATA%\MyChecklist\logs\app.log
+```
+
+The application never uses its executable directory as the mutable database
+location. Data directories are created during application startup, not when
+the configuration module is imported.
+
+## Backup and restore
+
+The planned backup flow uses SQLite's online backup API and stores backups in
+the application-data backup directory. Restore will validate SQLite integrity
+and the expected schema, create a pre-restore snapshot, require explicit
+confirmation, and preserve the current database if restore fails.
+
+Backup and restore are not implemented yet; do not treat copying a live
+database file as a valid backup.
+
+## Reminder limitation
+
+Version 1 reminders are checked while MyChecklist is open. The application
+does not claim to deliver reminders while closed. Closed-app reminders require
+a separately implemented and tested Windows Task Scheduler integration.
+
+## Architecture
+
+The project follows the layered architecture specified in the technical
+requirements:
+
+```text
+CustomTkinter UI -> application services -> repositories -> SQLite
+```
+
+See the six documents in [`docs/`](docs/) for the product, flow, UI, technical,
+schema, and implementation-plan source of truth.
