@@ -9,7 +9,9 @@ telemetry, or network requirement.
 
 The application is being implemented incrementally according to
 [`docs/06_Plan.md`](docs/06_Plan.md). The package and foundation configuration
-are present; the database, services, and UI are not yet complete.
+and the Phase 3 task-list, statistics, settings, and reminder-polling
+components are implemented. The package entry point and release packaging
+remain planned work.
 
 ## Requirements
 
